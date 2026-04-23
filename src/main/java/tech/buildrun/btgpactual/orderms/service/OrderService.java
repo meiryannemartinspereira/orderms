@@ -1,6 +1,9 @@
 package tech.buildrun.btgpactual.orderms.service;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
+import tech.buildrun.btgpactual.orderms.controller.dto.OrderResponse;
 import tech.buildrun.btgpactual.orderms.entity.OrderEntity;
 import tech.buildrun.btgpactual.orderms.entity.OrderItem;
 import tech.buildrun.btgpactual.orderms.listener.dto.OrderCreatedEvent;
@@ -39,5 +42,11 @@ public class OrderService {
                 .map(i -> i.price().multiply(BigDecimal.valueOf(i.quantity())))
                 .reduce(BigDecimal::add)
                 .orElse(BigDecimal.ZERO);
+    }
+
+    public Page<OrderResponse> findAllByCustomerId(Long customerId, PageRequest pageRequest){
+        var orders = orderRepository.findAllByCustomerId(customerId, pageRequest);
+
+        return orders.map(OrderResponse::fromEntity);
     }
 }
